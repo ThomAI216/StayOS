@@ -4,10 +4,12 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { Map, Coffee, Sparkles, CheckCircle2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { createClient } from "@/utils/supabase/client";
 
 export default function SetupGeneratorPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const router = useRouter();
+    const supabase = createClient();
     const [step, setStep] = useState(0);
 
     const steps = [
@@ -18,16 +20,50 @@ export default function SetupGeneratorPage({ params }: { params: Promise<{ id: s
     ];
 
     useEffect(() => {
-        const intervals = [
-            setTimeout(() => setStep(1), 1500),
-            setTimeout(() => setStep(2), 3000),
-            setTimeout(() => setStep(3), 4500),
-            setTimeout(() => {
-                router.push(`/host/properties/${id}/region-pack`);
-            }, 5500),
-        ];
-        return () => intervals.forEach(clearTimeout);
-    }, [router, id]);
+        let isMounted = true;
+        let propertyId = id; // Could be a slug or timestamp from UI creation
+
+        async function setupProperty() {
+            // First delay for visual effect
+            await new Promise(r => setTimeout(r, 1500));
+            if (!isMounted) return;
+            setStep(1);
+
+            // Step 2: Ensure Property exists in Database.
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                // Upsert property (using the temporal id as name/slug for now until real form)
+                const { data: newProp } = await supabase.from('properties').insert({
+                    host_id: user.id,
+                    name: 'New Property',
+                    slug: `prop-${id}`,
+                }).select().single();
+
+                if (newProp) {
+                    propertyId = newProp.id;
+                }
+            }
+
+            await new Promise(r => setTimeout(r, 1500));
+            if (!isMounted) return;
+            setStep(2);
+
+            await new Promise(r => setTimeout(r, 1500));
+            if (!isMounted) return;
+            setStep(3);
+
+            // Final transition
+            await new Promise(r => setTimeout(r, 1000));
+            if (!isMounted) return;
+            router.push(`/host/properties/${propertyId}/region-pack`);
+        }
+
+        setupProperty();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [router, id, supabase]);
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center p-8 bg-slate-50">

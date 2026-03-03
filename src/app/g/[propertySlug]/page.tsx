@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Wifi, LogOut, FileText, MessageSquare, MapPin } from "lucide-react";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function GuestWelcomePage({
     params,
@@ -9,6 +10,23 @@ export default async function GuestWelcomePage({
     params: Promise<{ propertySlug: string }>;
 }) {
     const { propertySlug } = await params;
+    const supabase = await createClient();
+
+    const { data: property } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('slug', propertySlug)
+        .single();
+
+    const { data: places } = await supabase
+        .from('places')
+        .select('*')
+        .eq('property_id', property?.id)
+        .eq('status', 'approve')
+        .limit(3);
+
+    if (!property) return <div className="p-8 text-center mt-20">Property not found.</div>;
+
     return (
         <div className="max-w-md mx-auto relative pb-8">
             {/* Hero Header */}
@@ -17,9 +35,9 @@ export default async function GuestWelcomePage({
                 {/* Placeholder for real property image */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 z-10" />
                 <div className="absolute bottom-4 left-6 z-20 text-white">
-                    <h1 className="text-3xl font-bold tracking-tight">Alpine Retreat</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">{property.name}</h1>
                     <p className="text-sm font-medium opacity-90 flex items-center gap-1 mt-1">
-                        <MapPin className="w-4 h-4" /> Chamonix Valley
+                        <MapPin className="w-4 h-4" /> {property.address}
                     </p>
                 </div>
             </div>
@@ -60,19 +78,15 @@ export default async function GuestWelcomePage({
                     </div>
 
                     <div className="space-y-3">
-                        {[
-                            { title: "Bakery du Village", reason: "Great morning bakery, just 5 min walk.", emoji: "🥐" },
-                            { title: "Lac Blanc Trail", reason: "Scenic short hike perfect for early hours.", emoji: "🥾" },
-                            { title: "Chamonix Center Café", reason: "Best espresso to kickstart the day.", emoji: "☕" }
-                        ].map((pick, i) => (
-                            <Card key={i} className="rounded-2xl border-none shadow-sm overflow-hidden">
+                        {places && places.map((pick) => (
+                            <Card key={pick.id} className="rounded-2xl border-none shadow-sm overflow-hidden">
                                 <CardContent className="p-4 flex gap-4 items-center bg-white">
                                     <div className="h-12 w-12 rounded-full bg-neutral-100 flex items-center justify-center text-2xl shrink-0">
-                                        {pick.emoji}
+                                        {pick.emoji || '📍'}
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-neutral-900 leading-tight">{pick.title}</h3>
-                                        <p className="text-sm text-neutral-500 leading-snug mt-1">{pick.reason}</p>
+                                        <p className="text-sm text-neutral-500 leading-snug mt-1 line-clamp-1">{pick.description}</p>
                                     </div>
                                 </CardContent>
                             </Card>

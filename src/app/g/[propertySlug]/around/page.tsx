@@ -1,16 +1,38 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Map, Navigation } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
 
-export default function AroundYouPage() {
-    const places = [
-        { title: "L'Atelier Café", type: "Food", dist: "3 min", emoji: "☕" },
-        { title: "Alpine Skis & Co", type: "Ski", dist: "10 min", emoji: "🎿" },
-        { title: "Super U Mini", type: "Essentials", dist: "5 min", emoji: "🛒" },
-        { title: "Mont Blanc Pharmacy", type: "Health", dist: "8 min", emoji: "⚕️" },
-        { title: "River Walk Trail", type: "Nature", dist: "12 min", emoji: "🌲" },
-    ];
+export default async function AroundYouPage({
+    params,
+}: {
+    params: Promise<{ propertySlug: string }>;
+}) {
+    const { propertySlug } = await params;
+    const supabase = await createClient();
+
+    // Fetch property to get its ID
+    const { data: property } = await supabase
+        .from('properties')
+        .select('id')
+        .eq('slug', propertySlug)
+        .single();
+
+    // Fetch grouped approved places
+    let places: any[] = [];
+    if (property) {
+        const { data } = await supabase
+            .from('places')
+            .select('*')
+            .eq('property_id', property.id)
+            .in('status', ['approve', 'pin']);
+        places = data || [];
+    }
+
+    // Extract unique categories for tabs
+    const categories = Array.from(new Set(places.map(p => p.category)));
+    const allTabs = ['recommended', ...categories];
 
     return (
         <div className="flex flex-col h-screen max-w-md mx-auto bg-gray-50 pb-20">
@@ -31,12 +53,12 @@ export default function AroundYouPage() {
                 <Tabs defaultValue="recommended" className="w-full h-full flex flex-col">
                     <ScrollArea className="w-full whitespace-nowrap shrink-0 mb-4 h-10">
                         <TabsList className="w-max h-9 inline-flex p-1 bg-neutral-100 rounded-full">
-                            <TabsTrigger value="recommended" className="rounded-full text-xs">Recommended</TabsTrigger>
-                            <TabsTrigger value="food" className="rounded-full text-xs">Food</TabsTrigger>
-                            <TabsTrigger value="nature" className="rounded-full text-xs">Nature</TabsTrigger>
-                            <TabsTrigger value="ski" className="rounded-full text-xs">Ski</TabsTrigger>
-                            <TabsTrigger value="essentials" className="rounded-full text-xs">Essentials</TabsTrigger>
+                            <TabsTrigger value="recommended" className="rounded-full text-xs capitalize">All</TabsTrigger>
+                            {categories.map(cat => (
+                                <TabsTrigger key={cat} value={cat} className="rounded-full text-xs capitalize">{cat}</TabsTrigger>
+                            ))}
                         </TabsList>
+                        <ScrollBar orientation="horizontal" className="hidden" />
                     </ScrollArea>
 
                     <TabsContent value="recommended" className="flex-1 overflow-y-auto outline-none pb-4 m-0">
@@ -44,14 +66,14 @@ export default function AroundYouPage() {
                             {places.map((place, i) => (
                                 <div key={i} className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm items-center">
                                     <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-xl shrink-0">
-                                        {place.emoji}
+                                        {place.emoji || '📍'}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <h3 className="font-semibold text-gray-900 truncate">{place.title}</h3>
                                         <div className="flex items-center gap-2 mt-1">
-                                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-medium bg-gray-100 text-gray-600 border-none shadow-none">{place.type}</Badge>
+                                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-medium bg-gray-100 text-gray-600 border-none shadow-none capitalize">{place.category}</Badge>
                                             <span className="text-xs text-gray-500 flex items-center gap-1">
-                                                <Navigation className="w-3 h-3" /> {place.dist}
+                                                <Navigation className="w-3 h-3" /> {place.distance_text || 'Nearby'}
                                             </span>
                                         </div>
                                     </div>
@@ -59,6 +81,29 @@ export default function AroundYouPage() {
                             ))}
                         </div>
                     </TabsContent>
+
+                    {categories.map(cat => (
+                        <TabsContent key={cat} value={cat} className="flex-1 overflow-y-auto outline-none pb-4 m-0">
+                            <div className="space-y-4">
+                                {places.filter(p => p.category === cat).map((place, i) => (
+                                    <div key={i} className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm items-center">
+                                        <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-xl shrink-0">
+                                            {place.emoji || '📍'}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-semibold text-gray-900 truncate">{place.title}</h3>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-medium bg-gray-100 text-gray-600 border-none shadow-none capitalize">{place.category}</Badge>
+                                                <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                    <Navigation className="w-3 h-3" /> {place.distance_text || 'Nearby'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </TabsContent>
+                    ))}
                     <TabsContent value="food" className="flex-1 overflow-y-auto">
                         {/* Same as above but filtered */}
                         <div className="text-center text-sm text-gray-500 pt-8">Showing Food...</div>
