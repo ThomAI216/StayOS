@@ -1,14 +1,14 @@
 import { Home, Compass, MessageSquare, HelpCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 
-export default function GuestLayout({
+export default async function GuestLayout({
     children,
     params,
 }: {
     children: React.ReactNode;
-    params: { propertySlug: string };
+    params: Promise<{ propertySlug: string }>;
 }) {
-    const { propertySlug } = params;
+    const { propertySlug } = await params;
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900 font-sans pb-20">

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { Map, Coffee, Sparkles, CheckCircle2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function SetupGeneratorPage({ params }: { params: { id: string } }) {
+export default function SetupGeneratorPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const router = useRouter();
     const [step, setStep] = useState(0);
 
@@ -22,11 +23,11 @@ export default function SetupGeneratorPage({ params }: { params: { id: string } 
             setTimeout(() => setStep(2), 3000),
             setTimeout(() => setStep(3), 4500),
             setTimeout(() => {
-                router.push(`/host/properties/${params.id}/region-pack`);
+                router.push(`/host/properties/${id}/region-pack`);
             }, 5500),
         ];
         return () => intervals.forEach(clearTimeout);
-    }, [router, params.id]);
+    }, [router, id]);
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center p-8 bg-slate-50">

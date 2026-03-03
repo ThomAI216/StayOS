@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mic, ArrowRight, Check, X, Pin, Coffee, Map as MapIcon, Snowflake, ShoppingBag, Waves } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function RegionPackReviewPage({ params }: { params: { id: string } }) {
+export default function RegionPackReviewPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const [activeTab, setActiveTab] = useState("food");
     const [isListening, setIsListening] = useState(false);
     const [transcript, setTranscript] = useState("");
@@ -69,7 +70,7 @@ export default function RegionPackReviewPage({ params }: { params: { id: string 
                         {isListening ? "Stop Voice Mode" : "Voice Editor Mode"}
                     </Button>
 
-                    <Link href={`/host/properties/${params.id}/knowledge`}>
+                    <Link href={`/host/properties/${id}/knowledge`}>
                         <Button className="h-12 px-8 bg-black hover:bg-slate-800 text-white rounded-full">
                             Next: Property Manual <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
@@ -107,8 +108,8 @@ export default function RegionPackReviewPage({ params }: { params: { id: string 
                                 key={c.id}
                                 onClick={() => setActiveTab(c.id)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === c.id
-                                        ? "bg-slate-100 text-slate-900"
-                                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                    ? "bg-slate-100 text-slate-900"
+                                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                                     }`}
                             >
                                 <c.icon className={`w-5 h-5 ${activeTab === c.id ? "text-blue-600" : "text-slate-400"}`} />
@@ -123,8 +124,8 @@ export default function RegionPackReviewPage({ params }: { params: { id: string 
                     <div className="max-w-4xl mx-auto space-y-4">
                         {places.filter(p => p.cat === activeTab).map(p => (
                             <Card key={p.id} className={`border transition-all duration-300 ${p.status === 'hide' ? 'opacity-50 border-slate-200 bg-slate-50' :
-                                    p.status === 'pin' ? 'border-amber-400 shadow-sm bg-amber-50/10' :
-                                        'border-slate-200 shadow-sm bg-white'
+                                p.status === 'pin' ? 'border-amber-400 shadow-sm bg-amber-50/10' :
+                                    'border-slate-200 shadow-sm bg-white'
                                 }`}>
                                 <CardContent className="p-6 flex items-center justify-between">
                                     <div className="flex-1">

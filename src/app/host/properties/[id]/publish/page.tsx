@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Copy, QrCode, CheckCircle2, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, use } from "react";
 
-export default function PublishPage({ params }: { params: { id: string } }) {
+export default function PublishPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const [copiedLink, setCopiedLink] = useState(false);
     const [copiedMsg, setCopiedMsg] = useState(false);
 

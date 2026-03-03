@@ -6,9 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, Sparkles, Wifi, Key, Clock, Car } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, use } from "react";
 
-export default function PropertyKnowledgePage({ params }: { params: { id: string } }) {
+export default function PropertyKnowledgePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const [isFilling, setIsFilling] = useState(false);
     const [content, setContent] = useState("");
 
@@ -44,7 +45,7 @@ export default function PropertyKnowledgePage({ params }: { params: { id: string
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Property Manual</h1>
                     <p className="text-slate-500 mt-1">The essentials your guests will need.</p>
                 </div>
-                <Link href={`/host/properties/${params.id}/publish`}>
+                <Link href={`/host/properties/${id}/publish`}>
                     <Button className="h-12 px-8 bg-blue-600 hover:bg-blue-700">
                         Publish Guest App
                     </Button>

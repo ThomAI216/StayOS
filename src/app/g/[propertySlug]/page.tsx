@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Wifi, LogOut, FileText, MessageSquare, MapPin } from "lucide-react";
 import Image from "next/image";
 
-export default function GuestWelcomePage({
+export default async function GuestWelcomePage({
     params,
 }: {
-    params: { propertySlug: string };
+    params: Promise<{ propertySlug: string }>;
 }) {
+    const { propertySlug } = await params;
     return (
         <div className="max-w-md mx-auto relative pb-8">
             {/* Hero Header */}
