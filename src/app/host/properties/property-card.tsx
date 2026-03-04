@@ -4,11 +4,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function PropertyCard({ p }: { p: any }) {
+    const router = useRouter();
+
     return (
-        <Link href={`/host/properties/${p.id}`} className="block">
-            <Card className="border-slate-200 shadow-none hover:shadow-md transition-all hover:border-slate-300 cursor-pointer">
+        <div
+            onClick={() => router.push(`/host/properties/${p.id}`)}
+            className="block cursor-pointer"
+        >
+            <Card className="border-slate-200 shadow-none hover:shadow-md transition-all hover:border-slate-300">
                 <CardContent className="p-6 flex items-center justify-between">
                     <div className="flex gap-6 items-center">
                         <div className="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200">
@@ -25,8 +31,8 @@ export function PropertyCard({ p }: { p: any }) {
                         </div>
                     </div>
 
-                    {/* Stop propagation so clicking this button doesn't navigate to the dashboard */}
-                    <div onClick={e => e.preventDefault()}>
+                    {/* Stop outer onClick so this doesn't also navigate to the dashboard */}
+                    <div onClick={e => e.stopPropagation()}>
                         <Link href={`/g/${p.slug}`} target="_blank">
                             <Button variant="secondary" className="gap-2 bg-slate-100 hover:bg-slate-200 text-slate-900">
                                 <ExternalLink className="w-4 h-4" /> View Guest App
@@ -35,6 +41,7 @@ export function PropertyCard({ p }: { p: any }) {
                     </div>
                 </CardContent>
             </Card>
-        </Link>
+        </div>
     );
 }
+
