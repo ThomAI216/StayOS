@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Home, List, Tag, Settings, LogOut, LayoutGrid } from "lucide-react";
+import { List, Tag, LayoutGrid } from "lucide-react";
+import SignOutButton from "./sign-out-button";
 
 export default function HostLayout({
     children,
@@ -28,9 +29,7 @@ export default function HostLayout({
                     </Link>
                 </nav>
                 <div className="p-4 border-t border-gray-200">
-                    <button className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-red-600 w-full px-2 py-2">
-                        <LogOut className="w-4 h-4" /> Sign Out
-                    </button>
+                    <SignOutButton />
                 </div>
             </aside>
 
