@@ -51,37 +51,34 @@ export default async function HostPropertiesList() {
                 ) : (
                     <div className="grid grid-cols-1 gap-4">
                         {properties.map(p => (
-                            <Card key={p.id} className="border-slate-200 shadow-none hover:shadow-sm transition-shadow">
-                                <CardContent className="p-6 flex items-center justify-between">
-                                    <div className="flex gap-6 items-center">
-                                        <div className="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200">
-                                            <MapPin className="w-6 h-6 text-slate-400" />
-                                        </div>
-                                        <div>
-                                            <div className="flex items-center gap-3">
-                                                <h3 className="font-bold text-lg text-slate-900">{p.name}</h3>
-                                                <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold uppercase tracking-wide">
-                                                    Live
-                                                </span>
+                            <Link key={p.id} href={`/host/properties/${p.id}`} className="block">
+                                <Card className="border-slate-200 shadow-none hover:shadow-md transition-all hover:border-slate-300 cursor-pointer">
+                                    <CardContent className="p-6 flex items-center justify-between">
+                                        <div className="flex gap-6 items-center">
+                                            <div className="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200">
+                                                <MapPin className="w-6 h-6 text-slate-400" />
                                             </div>
-                                            <p className="text-sm text-slate-500 mt-1">{p.address}</p>
+                                            <div>
+                                                <div className="flex items-center gap-3">
+                                                    <h3 className="font-bold text-lg text-slate-900">{p.name}</h3>
+                                                    <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold uppercase tracking-wide">
+                                                        Live
+                                                    </span>
+                                                </div>
+                                                <p className="text-sm text-slate-500 mt-1">{p.address}</p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="flex gap-3">
-                                        <Link href={`/host/properties/${p.id}/region-pack`}>
-                                            <Button variant="outline" className="gap-2">
-                                                <Settings className="w-4 h-4" /> Edit Pack
-                                            </Button>
-                                        </Link>
-                                        <Link href={`/g/${p.slug}`} target="_blank">
-                                            <Button variant="secondary" className="gap-2 bg-slate-100 hover:bg-slate-200 text-slate-900">
-                                                <ExternalLink className="w-4 h-4" /> View Guest App
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                        <div className="flex gap-3" onClick={e => e.stopPropagation()}>
+                                            <Link href={`/g/${p.slug}`} target="_blank">
+                                                <Button variant="secondary" className="gap-2 bg-slate-100 hover:bg-slate-200 text-slate-900">
+                                                    <ExternalLink className="w-4 h-4" /> View Guest App
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </Link>
                         ))}
                     </div>
                 )}
