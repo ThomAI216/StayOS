@@ -1,14 +1,12 @@
 "use client";
 
-import { Wifi, LogOut, FileText, MessageSquare, Copy, Check } from "lucide-react";
+import { Wifi, LogOut, FileText, MessageSquare, Copy, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export function QuickActions({ property, propertySlug }: { property: any, propertySlug: string }) {
-    const [openSheet, setOpenSheet] = useState<string | null>(null);
+    const [openPopup, setOpenPopup] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
     const router = useRouter();
 
@@ -20,126 +18,128 @@ export function QuickActions({ property, propertySlug }: { property: any, proper
 
     return (
         <>
-            <div className="grid grid-cols-4 gap-3">
-                <div className="flex flex-col items-center gap-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setOpenSheet('wifi')}
-                        className="h-14 w-14 rounded-2xl bg-white shadow-sm border-neutral-100 text-neutral-700 hover:text-black hover:bg-neutral-50 transition-all"
-                    >
-                        <Wifi className="w-6 h-6" />
-                    </Button>
-                    <span className="text-[11px] font-medium text-neutral-600">Wi-Fi</span>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setOpenSheet('checkout')}
-                        className="h-14 w-14 rounded-2xl bg-white shadow-sm border-neutral-100 text-neutral-700 hover:text-black hover:bg-neutral-50 transition-all"
-                    >
-                        <LogOut className="w-6 h-6" />
-                    </Button>
-                    <span className="text-[11px] font-medium text-neutral-600">Check-out</span>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setOpenSheet('rules')}
-                        className="h-14 w-14 rounded-2xl bg-white shadow-sm border-neutral-100 text-neutral-700 hover:text-black hover:bg-neutral-50 transition-all"
-                    >
-                        <FileText className="w-6 h-6" />
-                    </Button>
-                    <span className="text-[11px] font-medium text-neutral-600">Rules</span>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => router.push(`/g/${propertySlug}/help`)}
-                        className="h-14 w-14 rounded-2xl bg-white shadow-sm border-neutral-100 text-neutral-700 hover:text-black hover:bg-neutral-50 transition-all"
-                    >
-                        <MessageSquare className="w-6 h-6" />
-                    </Button>
-                    <span className="text-[11px] font-medium text-neutral-600">Concierge</span>
-                </div>
+            <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] gap-3 pb-2 -mx-6 px-6">
+                <Button
+                    variant="outline"
+                    onClick={() => setOpenPopup('wifi')}
+                    className="rounded-xl bg-white shadow-sm border-neutral-100 text-neutral-800 font-semibold shrink-0 h-11 px-4 gap-2 hover:bg-neutral-50 transition-all"
+                >
+                    <Wifi className="w-4 h-4 text-neutral-500" /> Wifi
+                </Button>
+                <Button
+                    variant="outline"
+                    onClick={() => setOpenPopup('checkout')}
+                    className="rounded-xl bg-white shadow-sm border-neutral-100 text-neutral-800 font-semibold shrink-0 h-11 px-4 gap-2 hover:bg-neutral-50 transition-all"
+                >
+                    <LogOut className="w-4 h-4 text-neutral-500" /> Check-out
+                </Button>
+                <Button
+                    variant="outline"
+                    onClick={() => setOpenPopup('rules')}
+                    className="rounded-xl bg-white shadow-sm border-neutral-100 text-neutral-800 font-semibold shrink-0 h-11 px-4 gap-2 hover:bg-neutral-50 transition-all"
+                >
+                    <FileText className="w-4 h-4 text-neutral-500" /> House Rules
+                </Button>
+                <Button
+                    variant="outline"
+                    onClick={() => router.push(`/g/${propertySlug}/help`)}
+                    className="rounded-xl bg-white shadow-sm border-neutral-100 text-neutral-800 font-semibold shrink-0 h-11 px-4 gap-2 hover:bg-neutral-50 transition-all"
+                >
+                    <MessageSquare className="w-4 h-4 text-neutral-500" /> Concierge
+                </Button>
             </div>
 
-            <Sheet open={!!openSheet} onOpenChange={(open) => !open && setOpenSheet(null)}>
-                <SheetContent side="bottom" className="rounded-t-3xl min-h-[40vh] p-6 pb-12">
-                    {openSheet === 'wifi' && (
-                        <>
-                            <SheetHeader className="mb-6">
-                                <SheetTitle className="flex items-center gap-2 text-2xl font-bold">
-                                    <Wifi className="w-6 h-6" /> Wi-Fi Connection
-                                </SheetTitle>
-                                <SheetDescription>Connect to the property's high-speed internet.</SheetDescription>
-                            </SheetHeader>
-                            <div className="space-y-4">
-                                <div className="bg-neutral-50 p-4 rounded-2xl">
-                                    <p className="text-sm font-medium text-neutral-500 mb-1">Network Name</p>
-                                    <p className="text-lg font-bold text-neutral-900">{property.wifi_network}</p>
+            {/* Centered popup overlay */}
+            {openPopup && (
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center px-6"
+                    onClick={() => setOpenPopup(null)}
+                >
+                    {/* Backdrop */}
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+
+                    {/* Card */}
+                    <div
+                        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 animate-in fade-in zoom-in-95 duration-200"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        {/* Close */}
+                        <button
+                            onClick={() => setOpenPopup(null)}
+                            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition-colors"
+                        >
+                            <X className="w-4 h-4 text-neutral-600" />
+                        </button>
+
+                        {openPopup === 'wifi' && (
+                            <div>
+                                <div className="flex items-center gap-2.5 mb-5">
+                                    <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center">
+                                        <Wifi className="w-5 h-5 text-blue-600" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-neutral-900">Wi-Fi</h3>
                                 </div>
-                                <div className="bg-neutral-50 p-4 rounded-2xl">
-                                    <p className="text-sm font-medium text-neutral-500 mb-1">Password</p>
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-lg font-bold text-neutral-900">{property.wifi_password}</p>
-                                        <Button size="icon" variant="ghost" onClick={() => handleCopy(property.wifi_password)}>
-                                            {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
-                                        </Button>
+                                <div className="space-y-3">
+                                    <div className="bg-neutral-50 p-4 rounded-2xl">
+                                        <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-1">Network</p>
+                                        <p className="text-base font-bold text-neutral-900">{property.wifi_network}</p>
+                                    </div>
+                                    <div className="bg-neutral-50 p-4 rounded-2xl">
+                                        <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-1">Password</p>
+                                        <div className="flex items-center justify-between">
+                                            <p className="text-base font-bold text-neutral-900 font-mono tracking-wide">{property.wifi_password}</p>
+                                            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleCopy(property.wifi_password)}>
+                                                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-neutral-400" />}
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </>
-                    )}
+                        )}
 
-                    {openSheet === 'checkout' && (
-                        <>
-                            <SheetHeader className="mb-6">
-                                <SheetTitle className="flex items-center gap-2 text-2xl font-bold">
-                                    <LogOut className="w-6 h-6" /> Check-out
-                                </SheetTitle>
-                                <SheetDescription>Information for your departure.</SheetDescription>
-                            </SheetHeader>
-                            <div className="space-y-4">
+                        {openPopup === 'checkout' && (
+                            <div>
+                                <div className="flex items-center gap-2.5 mb-5">
+                                    <div className="w-10 h-10 rounded-2xl bg-orange-50 flex items-center justify-center">
+                                        <LogOut className="w-5 h-5 text-orange-600" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-neutral-900">Check-out</h3>
+                                </div>
+                                <div className="space-y-3">
+                                    <div className="bg-neutral-50 p-4 rounded-2xl text-center">
+                                        <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-1">Check-out by</p>
+                                        <p className="text-2xl font-black text-neutral-900">{property.check_out_time}</p>
+                                    </div>
+                                    <div className="space-y-2.5 pt-1">
+                                        <p className="text-xs font-bold text-neutral-700">Before you leave:</p>
+                                        <ul className="space-y-2 text-[13px] text-neutral-600">
+                                            <li className="flex gap-2 items-start"><span className="mt-0.5 text-neutral-300">•</span> Leave the keys in the lockbox</li>
+                                            <li className="flex gap-2 items-start"><span className="mt-0.5 text-neutral-300">•</span> Turn off all lights and AC/Heating</li>
+                                            <li className="flex gap-2 items-start"><span className="mt-0.5 text-neutral-300">•</span> Lock the door behind you</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {openPopup === 'rules' && (
+                            <div>
+                                <div className="flex items-center gap-2.5 mb-5">
+                                    <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center">
+                                        <FileText className="w-5 h-5 text-emerald-600" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-neutral-900">House Rules</h3>
+                                </div>
                                 <div className="bg-neutral-50 p-4 rounded-2xl">
-                                    <p className="text-sm font-medium text-neutral-500 mb-1">Check-out Time</p>
-                                    <p className="text-xl font-bold text-neutral-900">{property.check_out_time}</p>
-                                </div>
-                                <div className="p-2">
-                                    <h4 className="font-bold mb-2">Before you leave:</h4>
-                                    <ul className="list-disc pl-5 space-y-1 text-neutral-700">
-                                        <li>Please leave the keys in the lockbox.</li>
-                                        <li>Turn off all lights and AC/Heating.</li>
-                                        <li>Lock the door behind you.</li>
-                                    </ul>
+                                    <p className="text-[13px] text-neutral-700 whitespace-pre-wrap leading-relaxed">
+                                        {property.house_rules || "No specific rules provided. Please be respectful of the property."}
+                                    </p>
                                 </div>
                             </div>
-                        </>
-                    )}
-
-                    {openSheet === 'rules' && (
-                        <>
-                            <SheetHeader className="mb-6">
-                                <SheetTitle className="flex items-center gap-2 text-2xl font-bold">
-                                    <FileText className="w-6 h-6" /> House Rules
-                                </SheetTitle>
-                                <SheetDescription>Please respect the property and neighbors.</SheetDescription>
-                            </SheetHeader>
-                            <div className="bg-neutral-50 p-4 rounded-2xl">
-                                <p className="text-neutral-800 whitespace-pre-wrap leading-relaxed">
-                                    {property.house_rules || "No specific rules provided. Please be respectful of the property."}
-                                </p>
-                            </div>
-                        </>
-                    )}
-                </SheetContent>
-            </Sheet>
+                        )}
+                    </div>
+                </div>
+            )}
         </>
     );
 }
