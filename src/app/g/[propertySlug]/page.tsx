@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, CloudRain } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
@@ -46,13 +46,14 @@ export default async function GuestWelcomePage({
     return (
         <div className="max-w-md mx-auto relative pb-28 bg-white min-h-screen">
             {/* Header */}
-            <div className="flex items-center justify-center px-6 pt-6 pb-4 bg-white sticky top-0 z-40">
+            <div className="flex flex-col items-center justify-center px-6 pt-8 pb-4 bg-white sticky top-0 z-40">
                 <div className="font-serif font-black text-xl tracking-tighter uppercase text-center w-full">{property.name}</div>
+                <div className="mt-1 text-sm font-medium text-neutral-500">Welcome Alex!</div>
             </div>
 
             {/* Hero Image */}
             <div className="px-6">
-                <div className="relative h-60 w-full rounded-3xl overflow-hidden shadow-sm">
+                <div className="relative h-48 w-full rounded-3xl overflow-hidden shadow-sm">
                     <Image
                         src={heroImage}
                         alt={property.name}
@@ -63,18 +64,34 @@ export default async function GuestWelcomePage({
                 </div>
             </div>
 
-            <div className="px-6 mt-8 space-y-10">
-                {/* Welcome Context */}
-                <div className="space-y-1">
-                    <h1 className="text-[28px] font-bold tracking-tight text-neutral-900">Welcome Alex!</h1>
-                    <p className="text-[13px] font-medium text-neutral-600">{dateStr} • 2 Adults, 2 Children</p>
-                    <Link href={`/g/${propertySlug}/guide`} className="text-[13px] text-blue-600 font-semibold inline-block hover:underline pt-0.5">
-                        See reservation
+            <div className="px-6 mt-6 space-y-8">
+                {/* Stay Summary */}
+                <div className="bg-neutral-50 rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                        <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Your Stay</p>
+                        <p className="text-sm font-semibold text-neutral-900">{dateStr}</p>
+                        <p className="text-[13px] text-neutral-600 mt-0.5">2 Adults, 2 Children</p>
+                    </div>
+                    <Link href={`/g/${propertySlug}/guide`} className="text-[13px] text-blue-600 font-bold hover:underline">
+                        Details
                     </Link>
                 </div>
 
                 {/* Horizontal Quick Actions */}
                 <QuickActions property={property} propertySlug={propertySlug} />
+
+                {/* Weather Widget */}
+                <div className="flex items-center justify-between bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 shadow-sm border border-blue-100/50">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+                            <CloudRain className="w-5 h-5 text-blue-500" />
+                        </div>
+                        <div>
+                            <p className="font-bold text-neutral-900 text-sm">62°F, Light Rain</p>
+                            <p className="text-[12px] text-neutral-600 font-medium">Perfect day for a museum visit</p>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Top picks for you (Attractions / Places) */}
                 {places && places.length > 0 && (

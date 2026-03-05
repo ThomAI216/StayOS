@@ -1,6 +1,6 @@
 "use client";
 
-import { Wifi, LogOut, FileText, MessageSquare, Copy, Check, X } from "lucide-react";
+import { Wifi, LogOut, MessageSquare, Copy, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -17,7 +17,7 @@ export function QuickActions({ property, propertySlug }: { property: any, proper
     };
 
     return (
-        <>
+        <div className="w-full">
             <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] gap-3 pb-2 -mx-6 px-6">
                 <Button
                     variant="outline"
@@ -32,13 +32,6 @@ export function QuickActions({ property, propertySlug }: { property: any, proper
                     className="rounded-xl bg-white shadow-sm border-neutral-100 text-neutral-800 font-semibold shrink-0 h-11 px-4 gap-2 hover:bg-neutral-50 transition-all"
                 >
                     <LogOut className="w-4 h-4 text-neutral-500" /> Check-out
-                </Button>
-                <Button
-                    variant="outline"
-                    onClick={() => setOpenPopup('rules')}
-                    className="rounded-xl bg-white shadow-sm border-neutral-100 text-neutral-800 font-semibold shrink-0 h-11 px-4 gap-2 hover:bg-neutral-50 transition-all"
-                >
-                    <FileText className="w-4 h-4 text-neutral-500" /> House Rules
                 </Button>
                 <Button
                     variant="outline"
@@ -121,25 +114,9 @@ export function QuickActions({ property, propertySlug }: { property: any, proper
                                 </div>
                             </div>
                         )}
-
-                        {openPopup === 'rules' && (
-                            <div>
-                                <div className="flex items-center gap-2.5 mb-5">
-                                    <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center">
-                                        <FileText className="w-5 h-5 text-emerald-600" />
-                                    </div>
-                                    <h3 className="text-lg font-bold text-neutral-900">House Rules</h3>
-                                </div>
-                                <div className="bg-neutral-50 p-4 rounded-2xl">
-                                    <p className="text-[13px] text-neutral-700 whitespace-pre-wrap leading-relaxed">
-                                        {property.house_rules || "No specific rules provided. Please be respectful of the property."}
-                                    </p>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
 }

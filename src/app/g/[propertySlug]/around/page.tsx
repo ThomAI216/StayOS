@@ -78,13 +78,19 @@ export default async function AroundYouPage({
                     ></iframe>
                 </div>
                 {property?.address && (
-                    <div className="mt-3 flex items-center gap-2 px-1">
-                        <div className="w-8 h-8 rounded-xl bg-neutral-100 flex items-center justify-center">
-                            <Navigation className="w-4 h-4 text-neutral-500" />
+                    <div className="mt-4 relative group">
+                        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                            <span className="text-xl">✨</span>
                         </div>
-                        <div>
-                            <p className="text-[13px] font-semibold text-neutral-900">{property.address}</p>
-                            <p className="text-[11px] text-neutral-400">Your property location</p>
+                        <input
+                            type="text"
+                            placeholder="I am your guide... ask for recommendations!"
+                            className="w-full bg-neutral-100 border-none text-sm rounded-2xl py-3.5 pl-12 pr-12 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all placeholder:text-neutral-500 font-medium"
+                        />
+                        <div className="absolute inset-y-0 right-4 flex items-center">
+                            <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center shadow-sm cursor-pointer hover:scale-105 transition-transform">
+                                <ChevronRight className="w-3 h-3 text-white" />
+                            </div>
                         </div>
                     </div>
                 )}
@@ -111,27 +117,34 @@ export default async function AroundYouPage({
                             {/* Horizontal scroll carousel */}
                             <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] gap-4 pb-2 px-6 snap-x">
                                 {items.map((place: any) => (
-                                    <div
+                                    <Link
+                                        href={`/g/${propertySlug}/around/${place.id}`}
                                         key={place.id}
-                                        className="shrink-0 w-64 snap-start group cursor-pointer"
+                                        className="shrink-0 w-64 snap-start group block"
                                     >
                                         <div className="rounded-2xl overflow-hidden bg-white border border-neutral-100 shadow-sm hover:shadow-md transition-all">
                                             {/* Emoji hero area */}
-                                            <div className="h-28 w-full bg-neutral-50 flex items-center justify-center text-5xl relative group-hover:bg-neutral-100 transition-colors">
+                                            <div className="h-32 w-full bg-neutral-50 flex items-center justify-center text-5xl relative group-hover:bg-neutral-100 transition-colors">
                                                 <span className="group-hover:scale-110 transition-transform duration-300">
                                                     {place.emoji || '📍'}
-                                                </span>
-                                                {/* Distance badge */}
-                                                <span className="absolute top-3 right-3 text-[10px] text-neutral-400 font-medium bg-white/80 backdrop-blur-sm px-2 py-0.5 rounded-full flex items-center gap-1">
-                                                    <Navigation className="w-2.5 h-2.5" /> {place.distance_text || 'Nearby'}
                                                 </span>
                                             </div>
                                             <div className="p-4">
                                                 <h3 className="font-bold text-neutral-900 text-[15px] truncate group-hover:text-blue-600 transition-colors">{place.title}</h3>
                                                 <p className="text-xs text-neutral-500 mt-1 line-clamp-2 leading-relaxed">{place.description}</p>
+
+                                                {/* Transport mock pills */}
+                                                <div className="flex items-center gap-2 mt-3">
+                                                    <span className="inline-flex items-center gap-1 bg-neutral-100 text-neutral-600 text-[10px] font-bold px-2 py-1 rounded-full">
+                                                        🚗 5 min
+                                                    </span>
+                                                    <span className="inline-flex items-center gap-1 bg-neutral-100 text-neutral-600 text-[10px] font-bold px-2 py-1 rounded-full">
+                                                        🚌 10 min
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </section>
